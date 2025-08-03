@@ -1,55 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import "./XCountrySearch.css";
 import CountryCard from './CountryCard';
-import './App.css';
 
-const App = () => {
-    const [countries, setCountries] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
+function XCountrySearch() {
+    const [data, setData] = useState([]);
+    const [inputData, setInputData] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
+
+    const fetchData = async () => {
+        try {
+            const apiData = await fetch("https://restcountries.com/v3.1/all");
+            const actualData = await apiData.json();
+            // console.log(actualData[0].name.common);
+            setData(actualData);
+            setFilteredData(actualData);
+        } catch (err) {
+            console.log("Failed to fetch the data ", err);
+        }
+    }
+
+    const updateData = () => {
+        const filterData = data.filter((item) => {
+            return (item.name.common.toLowerCase().includes(inputData.toLowerCase()));
+        });
+        setFilteredData(filterData);
+    }
 
     useEffect(() => {
-        // Fetch country data from API
-        const fetchCountries = async () => {
-            try {
-                const response = await fetch('https://restcountries.com/v3.1/all?fields=cca3,name,flags');
-                if (!response.ok) throw new Error('Network response was not ok.');
-                const data = await response.json();
-                setCountries(data);
-            } catch (error) {
-                console.error('Fetch error:', error);
-            }
-        };
-
-        fetchCountries();
+        fetchData();
     }, []);
 
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value.toLowerCase());
-    };
+    useEffect(() => {
+        updateData();
+    }, [inputData]);
 
-    const filteredCountries = countries.filter((country) =>
-        country.name.common.toLowerCase().includes(searchTerm)
-    );
 
     return (
-        <div className="App">
-            <input
-                type="text"
-                placeholder="Search for a country..."
-                value={searchTerm}
-                onChange={handleSearch}
-                className="searchBar"
-            />
-            <div className="countryContainer">
-                {filteredCountries.map((country) => (
-                    <CountryCard
-                        key={country.cca3}
-                        name={country.name.common}
-                        flag={country.flags.png}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
+        <>
+            
+                
+                     setInputData(e.target.value)} />
+                
+            
+            
 
-export default App;
+
+            
+                {filteredData.map((item, index) => {
+                    return (
+                        
+                    )
+                })}
+            
+
+        
+    )
+}
+
+export default XCountrySearch;
